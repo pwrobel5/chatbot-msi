@@ -1,6 +1,14 @@
 farewells = ["Bye", "Goodbye", "See you", "Have a nice day"]
 
 
+def train_polite(trainer):
+    user_sentences = ["Thank you", "Thanks"]
+    answers = ["Nevermind", "You're welcome"]
+    polite_combinations = [[i, j] for i in user_sentences for j in answers]
+    for combination in polite_combinations:
+        trainer.train(combination)
+        
+
 def train_greetings(trainer):
     greetings = ["Hey", "Hi", "Hello", "Welcome", "Good day"]
     greetings_combinations = [[i, j] for i in greetings for j in greetings]
@@ -38,6 +46,7 @@ def train_jokes(trainer):
 
 
 def train_smalltalk(trainer):
+    train_polite(trainer)
     train_greetings(trainer)
     train_farewells(trainer)
     train_howareyou(trainer)

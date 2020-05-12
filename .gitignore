@@ -214,4 +214,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Database
-*.sqlite3
+*.sqlite3*
+
+# API keys
+api_keys.py

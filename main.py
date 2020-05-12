@@ -10,13 +10,24 @@ if __name__ == '__main__':
         "WeatherChatBot",
         storage_adapter="chatterbot.storage.SQLStorageAdapter",
         logic_adapters=[
+            "chatterbot.logic.MathematicalEvaluation",
+            "conversations.weather_adapter.CurrentWeatherAdapter",
+            "conversations.weather_adapter.WeatherForecastAdapter",
             {
                 "import_path": "chatterbot.logic.BestMatch",
                 "default_response": "I am sorry, but I do not understand.",
-                "maximum_similarity_threshold": 0.51
+                "maximum_similarity_threshold": 0.90
             },
-            "chatterbot.logic.MathematicalEvaluation",
-            "chatterbot.logic.TimeLogicAdapter"
+            {
+                "import_path": "chatterbot.logic.TimeLogicAdapter",
+                "negative": [
+                    "current weather:",
+                    "What is the weather now:",
+                    "give me the weather:",
+                    "what is the weather like:",
+                    "thank you"
+                ]
+            }
         ],
         database_uri="sqlite:///" + DATABASE_FILE_NAME,
         filters=[filters.get_recent_repeated_responses]
@@ -33,8 +44,8 @@ if __name__ == '__main__':
             user_input = input("You > ")
             if user_input.lower() in farewells_lower:
                 run_loop = False
-            bot_input = bot.get_response(user_input)
-            print(bot_input)
+            bot_response = bot.get_response(user_input)
+            print(bot_response)
         except (KeyboardInterrupt, EOFError, SystemExit):
             print("Ending work...")
             run_loop = False
