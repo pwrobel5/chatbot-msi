@@ -1,4 +1,4 @@
-# chatterbot-msi
+# chatbot-msi
 
 Small project of chatbot done for artifical intelligence methods academic course
 

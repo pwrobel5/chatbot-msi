@@ -13,6 +13,7 @@ if __name__ == '__main__':
             "chatterbot.logic.MathematicalEvaluation",
             "conversations.weather_adapter.CurrentWeatherAdapter",
             "conversations.weather_adapter.WeatherForecastAdapter",
+            "conversations.currency_adapter.CurrencyAdapter",
             {
                 "import_path": "chatterbot.logic.BestMatch",
                 "default_response": "I am sorry, but I do not understand.",
@@ -25,7 +26,9 @@ if __name__ == '__main__':
                     "What is the weather now:",
                     "give me the weather:",
                     "what is the weather like:",
-                    "thank you"
+                    "thank you",
+                    "currency",
+                    "exchange"
                 ]
             }
         ],

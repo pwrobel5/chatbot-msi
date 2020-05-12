@@ -27,7 +27,7 @@ class WeatherAPI:
             raise ValueError("Error with connection to Weather API, HTTP status code: {}".format(response.status_code))
 
         response_data = response.json()["data"][0]
-        result = "Weather for {}, {},\n\ttime: {},\n\tweather condition: {},\n\ttemperature: {},\n\tsunrise: {},\n\t" \
+        result = "Weather for {}, {}:\n\ttime: {}\n\tweather condition: {}\n\ttemperature: {}\n\tsunrise: {}\n\t" \
                  "sunset: {}".format(
             response_data["city_name"], response_data["country_code"],
             response_data["ob_time"], response_data["weather"]["description"], response_data["temp"],
@@ -57,8 +57,8 @@ class WeatherAPI:
         for forecast in forecasts:
             sunrise = datetime.utcfromtimestamp(forecast["sunrise_ts"]).strftime(time_format)
             sunset = datetime.utcfromtimestamp(forecast["sunset_ts"]).strftime(time_format)
-            result += "\t{},\n\t\tweather condition: {},\n\t\tmin temperature: {},\n\t\tmax temperature: {},\n\t\t" \
-                      "average temperature: {},\n\t\tsunrise: {},\n\t\tsunset: {}\n".format(
+            result += "\t{},\n\t\tweather condition: {}\n\t\tmin temperature: {}\n\t\tmax temperature: {}\n\t\t" \
+                      "average temperature: {}\n\t\tsunrise: {}\n\t\tsunset: {}\n".format(
                 forecast["valid_date"], forecast["weather"]["description"], forecast["min_temp"],
                 forecast["max_temp"], forecast["temp"], sunrise, sunset
             )
