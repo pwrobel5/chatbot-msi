@@ -1,5 +1,6 @@
 import functools
 
+from chatterbot.conversation import Statement
 from chatterbot.logic import LogicAdapter
 
 
@@ -29,14 +30,20 @@ class CommonAdapter(LogicAdapter):
 
         self.critical = set(kwargs.get("critical", []))
 
+        self.response = None
+
     def can_process(self, statement):
-        text = statement.text
+        text = statement.text.lower().split(":", 1)[0]
 
         for critical_word in self.critical:
             if critical_word in text:
                 return False
 
-        return True
+        for positive_word in self.positive:
+            if positive_word in text:
+                return True
+
+        return False
 
     def determine_confidence(self, statement):
         """
@@ -47,17 +54,31 @@ class CommonAdapter(LogicAdapter):
         """
 
         text = statement.text.lower().split(":", 1)[0]
+        words_number = len(text.split())
 
         for critical_word in self.critical:
             if critical_word in text:
-                return 0
+                return 0.0
 
         positives_counter = functools.reduce(lambda counter, element: counter + 1 if element in text else counter,
                                              self.positive, 0)
         negatives_counter = functools.reduce(lambda counter, element: counter + 1 if element in text else counter,
                                              self.negative, 0)
 
-        if positives_counter >= negatives_counter and positives_counter > 0:
-            return 1
+        if positives_counter >= negatives_counter and positives_counter > 0 and positives_counter / words_number >= 0.3:
+            return 1.0
         else:
-            return 0
+            return 0.0
+
+    def verify_argument(self, statement):
+        self.response = Statement(text="")
+        self.response.confidence = self.determine_confidence(statement)
+        argument = statement.text.split(":", 1)
+
+        if len(argument) != 2 or argument[1].strip() == "":
+            self.response.confidence = 0.0
+            self.response.text = "Nie podano atrybutu (miasta/waluty)! Poprawny format: 'zapytanie: " \
+                                 "nazwa miasta/symbol waluty'"
+            return None
+
+        return argument[1].strip()

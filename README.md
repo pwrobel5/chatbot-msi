@@ -1,6 +1,6 @@
 # chatbot-msi
 
-Small project of chatbot done for artifical intelligence methods academic course
+Small project of chatbot talking in Polish done for artificial intelligence methods academic course
 
 # Running
 

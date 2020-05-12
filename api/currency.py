@@ -1,6 +1,8 @@
-import requests
-import api.api_keys
 from datetime import datetime
+
+import requests
+
+import api.api_keys
 
 
 class CurrencyAPI:
@@ -24,7 +26,7 @@ class CurrencyAPI:
         response = requests.get(self._url, data)
 
         if response.status_code != 200:
-            raise ValueError("Error with connection to Currency API, HTTP status code: {}".format(response.status_code))
+            raise ValueError("Błąd połączenia z API kursów walut, status HTTP: {}".format(response.status_code))
 
         response_json = response.json()
         date = datetime.utcfromtimestamp(response_json["timestamp"]).strftime(time_format)
@@ -32,7 +34,7 @@ class CurrencyAPI:
         exchange_rate = float(response_json["rates"][requested_currency])
         exchange_rate = base_rate / exchange_rate
 
-        return "Exchange rate for date: {}, 1 {} = {} {}".format(
+        return "Kurs wymiany na dzień: {}, 1 {} = {} {}".format(
             date,
             requested_currency,
             exchange_rate,

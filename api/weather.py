@@ -19,16 +19,17 @@ class WeatherAPI:
         data = {
             "key": self._key,
             "lat": location["lat"],
-            "lon": location["lng"]
+            "lon": location["lng"],
+            "lang": "pl"
         }
         response = requests.get(self._url_current, data)
 
         if response.status_code != 200:
-            raise ValueError("Error with connection to Weather API, HTTP status code: {}".format(response.status_code))
+            raise ValueError("Błąd połączenia z API pogodowym, status HTTP: {}".format(response.status_code))
 
         response_data = response.json()["data"][0]
-        result = "Weather for {}, {}:\n\ttime: {}\n\tweather condition: {}\n\ttemperature: {}\n\tsunrise: {}\n\t" \
-                 "sunset: {}".format(
+        result = "Pogoda dla {}, {}:\n\tdata: {}\n\tpogoda: {}\n\ttemperatura: {}\n\twschód słońca: {}\n\t" \
+                 "zachód słońca: {}".format(
             response_data["city_name"], response_data["country_code"],
             response_data["ob_time"], response_data["weather"]["description"], response_data["temp"],
             response_data["sunrise"], response_data["sunset"]
@@ -41,24 +42,25 @@ class WeatherAPI:
             "key": self._key,
             "lat": location["lat"],
             "lon": location["lng"],
-            "days": "5"
+            "days": "5",
+            "lang": "pl"
         }
         response = requests.get(self._url_forecast, data)
 
         if response.status_code != 200:
-            raise ValueError("Error with connection to Weather API, HTTP status code: {}".format(response.status_code))
+            raise ValueError("Błąd połączenia z API pogodowym, status HTTP: {}".format(response.status_code))
 
         response_json = response.json()
         city_name = response_json["city_name"]
         country = response_json["country_code"]
-        result = "Forecast for {}, {}:\n".format(city_name, country)
+        result = "Prognoza pogody dla {}, {}:\n".format(city_name, country)
 
         forecasts = response_json["data"]
         for forecast in forecasts:
             sunrise = datetime.utcfromtimestamp(forecast["sunrise_ts"]).strftime(time_format)
             sunset = datetime.utcfromtimestamp(forecast["sunset_ts"]).strftime(time_format)
-            result += "\t{},\n\t\tweather condition: {}\n\t\tmin temperature: {}\n\t\tmax temperature: {}\n\t\t" \
-                      "average temperature: {}\n\t\tsunrise: {}\n\t\tsunset: {}\n".format(
+            result += "\t{}\n\t\tpogoda: {}\n\t\ttemperatura minimalna: {}\n\t\ttemperatura maksymalna: {}\n\t\t" \
+                      "temperatura średnia: {}\n\t\twschód słońca: {}\n\t\tzachód słońca: {}\n".format(
                 forecast["valid_date"], forecast["weather"]["description"], forecast["min_temp"],
                 forecast["max_temp"], forecast["temp"], sunrise, sunset
             )

@@ -20,7 +20,7 @@ class GoogleLocationAPI:
         response = requests.get(self._url, data)
 
         if response.status_code != 200:
-            raise ValueError("Error with connecting to Google API, HTTP status code: {}".format(response.status_code))
+            raise ValueError("Błąd połączenia z API Google'a, status HTTP: {}".format(response.status_code))
 
         coordinates = response.json()["results"][0]["geometry"]["location"]
         return coordinates

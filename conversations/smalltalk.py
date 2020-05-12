@@ -1,16 +1,16 @@
-farewells = ["Bye", "Goodbye", "See you", "Have a nice day"]
+farewells = ["Na razie", "Miłego dnia", "Żegnam", "Do widzenia"]
 
 
 def train_polite(trainer):
-    user_sentences = ["Thank you", "Thanks"]
-    answers = ["Nevermind", "You're welcome"]
+    user_sentences = ["Dziękuję", "Dzięki"]
+    answers = ["Nie ma za co", "Drobiazg"]
     polite_combinations = [[i, j] for i in user_sentences for j in answers]
     for combination in polite_combinations:
         trainer.train(combination)
-        
+
 
 def train_greetings(trainer):
-    greetings = ["Hey", "Hi", "Hello", "Welcome", "Good day"]
+    greetings = ["Cześć", "Witam", "Dzień dobry"]
     greetings_combinations = [[i, j] for i in greetings for j in greetings]
     for combination in greetings_combinations:
         trainer.train(combination)
@@ -23,26 +23,18 @@ def train_farewells(trainer):
 
 
 def train_howareyou(trainer):
-    questions = ["How are you?", "How do you do?"]
-    answers = ["Fine, what about you?", "Hmmm, not bad. How are you?", "Excellent, and you?"]
-    user_communication = [["I'm fine", "I'm happy with that"], ["Not bad", "That is good"], ["Awful", "I'm sorry"]]
+    questions = ["Jak się masz?", "Co u ciebie?"]
+    answers = ["W porządku, a ty?", "Hmmm, jako tako. A co u ciebie?", "Świetnie, a u ciebie jak tam?"]
+    user_communication = [["W porządku", "Cieszę się"], ["OK", "Fajnie!"],
+                          ["Benadziejnie", "Oooo, przykro mi"]]
     howareyou_combinations = [[i, j] for i in questions for j in answers]
     for combination in howareyou_combinations:
         for user_case in user_communication:
             trainer.train(combination + user_case)
 
 
-def train_jokes(trainer):
-    questions = ["Make me laugh", "Tell a joke"]
-    jokes = [
-        "What is the longest word in the English language?\n'Smiles', because there is a"
-        "mile between its first and last letters!",
-        "Could you please call me a Taxi?\nYou're a taxi",
-        "What's blue and smells like red paint?\nBlue paint"
-    ]
-    jokes_combinations = [[i, j] for i in questions for j in jokes]
-    for combination in jokes_combinations:
-        trainer.train(combination)
+def train_joke_responses(trainer):
+    trainer.train(["Haha", "Dobre, co?"])
 
 
 def train_smalltalk(trainer):
@@ -50,4 +42,4 @@ def train_smalltalk(trainer):
     train_greetings(trainer)
     train_farewells(trainer)
     train_howareyou(trainer)
-    train_jokes(trainer)
+    train_joke_responses(trainer)

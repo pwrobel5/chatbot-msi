@@ -9,27 +9,19 @@ if __name__ == '__main__':
     bot = ChatBot(
         "WeatherChatBot",
         storage_adapter="chatterbot.storage.SQLStorageAdapter",
+        input_adapter='chatterbot.input.TerminalAdapter',
+        output_adapter='chatterbot.output.TerminalAdapter',
         logic_adapters=[
             "chatterbot.logic.MathematicalEvaluation",
             "conversations.weather_adapter.CurrentWeatherAdapter",
             "conversations.weather_adapter.WeatherForecastAdapter",
             "conversations.currency_adapter.CurrencyAdapter",
+            "conversations.joke_adapter.JokeAdapter",
+            "conversations.time_adapter.TimeAdapter",
             {
                 "import_path": "chatterbot.logic.BestMatch",
-                "default_response": "I am sorry, but I do not understand.",
+                "default_response": "Przykro mi, ale nie rozumiem :(",
                 "maximum_similarity_threshold": 0.90
-            },
-            {
-                "import_path": "chatterbot.logic.TimeLogicAdapter",
-                "negative": [
-                    "current weather:",
-                    "What is the weather now:",
-                    "give me the weather:",
-                    "what is the weather like:",
-                    "thank you",
-                    "currency",
-                    "exchange"
-                ]
             }
         ],
         database_uri="sqlite:///" + DATABASE_FILE_NAME,
@@ -41,14 +33,14 @@ if __name__ == '__main__':
 
     run_loop = True
     farewells_lower = list(map(lambda x: x.lower(), farewells))
-    print("Type something...")
+    print("Napisz coś...")
     while run_loop:
         try:
-            user_input = input("You > ")
+            user_input = input("Zapytanie > ")
             if user_input.lower() in farewells_lower:
                 run_loop = False
             bot_response = bot.get_response(user_input)
             print(bot_response)
         except (KeyboardInterrupt, EOFError, SystemExit):
-            print("Ending work...")
+            print("Kończymy pracę...")
             run_loop = False
