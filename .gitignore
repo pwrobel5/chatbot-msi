@@ -218,3 +218,6 @@ fabric.properties
 
 # API keys
 api_keys.py
+
+# Editor files
+.idea/*
