@@ -15,14 +15,17 @@ public class Solver {
         JFuzzyChart.get().chart(fis);
     }
 
-    public void getAction(double distance, double weight, double loudness) {
+    public Variable getAction(double distance, double weight, double loudness) {
         fis.setVariable("distance", distance);
         fis.setVariable("weight", weight);
         fis.setVariable("loudness", loudness);
 
         fis.evaluate();
 
-        Variable action = fis.getVariable("action");
+        return fis.getVariable("action");
+    }
+
+    public void showActionChart(Variable action) {
         JFuzzyChart.get().chart(action, action.getDefuzzifier(), true);
     }
 }
