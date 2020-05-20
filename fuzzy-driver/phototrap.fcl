@@ -1,0 +1,76 @@
+FUNCTION_BLOCK
+
+VAR_INPUT
+distance : REAL;
+weight : REAL;
+loudness : REAL;
+END_VAR
+
+VAR_OUTPUT
+action : REAL;
+END_VAR
+
+FUZZIFY distance
+TERM near := (0, 1) (10, 1) (15, 0.5) (20, 0);
+TERM medium := (10, 0) (15, 0.5) (20, 1) (30, 1) (35, 0.5) (40, 0);
+TERM far := (30, 0) (35, 0.5) (40, 1) (50, 1);
+END_FUZZIFY
+
+FUZZIFY weight
+TERM light := (0, 1) (20, 1) (40, 0);
+TERM medium := (20, 0) (40, 1) (60, 1) (80, 0);
+TERM heavy := (60, 0) (80, 1) (90, 1) (100, 0);
+TERM veryHeavy := (90, 0) (110, 1) (120, 1) (140, 1);
+END_FUZZIFY
+
+FUZZIFY loudness
+TERM quiet := (0, 1) (20, 1) (40, 0);
+TERM medium := (20, 0) (40, 1) (50, 1) (60, 0);
+TERM loud := (50, 0) (60, 1) (100, 1);
+END_FUZZIFY
+
+DEFUZZIFY action
+TERM nothing := (0, 1) (3, 1) (5, 0);
+TERM photo := (3, 0) (5, 1) (7, 1) (9, 0);
+TERM alarm := (7, 0) (8, 1) (10, 1);
+METHOD : COG;
+DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK first
+AND: MIN;
+ACT: MIN;
+
+RULE 0: IF distance IS far AND loudness IS quiet THEN action IS nothing;
+
+RULE 1: IF distance IS far AND loudness IS medium AND weight IS light THEN action IS nothing;
+RULE 2: IF distance IS far AND loudness IS medium AND weight IS medium THEN action IS nothing;
+RULE 3: IF distance IS far AND loudness IS medium AND weight IS heavy THEN action IS photo;
+RULE 4: IF distance IS far AND loudness IS medium AND weight IS veryHeavy THEN action IS photo;
+
+RULE 5: IF distance IS far AND loudness IS loud THEN action IS photo;
+
+
+RULE 6: IF distance IS medium AND loudness IS quiet THEN action IS nothing;
+
+RULE 10: IF distance IS medium AND loudness IS medium AND weight IS light THEN action IS nothing;
+RULE 11: IF distance IS medium AND loudness IS medium AND weight IS medium THEN action IS photo;
+RULE 12: IF distance IS medium AND loudness IS medium AND weight IS heavy THEN action IS photo;
+RULE 13: IF distance IS medium AND loudness IS medium AND weight IS veryHeavy THEN action IS photo;
+
+RULE 14: IF distance IS medium AND loudness IS loud THEN action IS photo;
+
+
+RULE 15: IF distance IS near AND loudness IS quiet THEN action IS photo;
+
+RULE 16: IF distance IS near AND loudness IS medium AND weight IS light THEN action IS photo;
+RULE 17: IF distance IS near AND loudness IS medium AND weight IS medium THEN action IS photo;
+RULE 18: IF distance IS near AND loudness IS medium AND weight IS heavy THEN action IS photo;
+RULE 19: IF distance IS near AND loudness IS medium AND weight IS veryHeavy THEN action IS alarm;
+
+RULE 20: IF distance IS near AND loudness IS loud THEN action IS alarm;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
+
