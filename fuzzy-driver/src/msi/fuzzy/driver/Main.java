@@ -39,11 +39,12 @@ public class Main {
                     Variable action = solver.getAction(distance, weight, loudness);
                     System.out.println("Received value: " + action.getValue());
                     solver.showActionChart(action);
-                } else if (input.equalsIgnoreCase("q"))
+                } else if (input.equalsIgnoreCase("q")) {
                     continueReading = false;
 
-                if (simulatorWindow != null) {
-                    simulatorWindow.killSimulationProcess();
+                    if (simulatorWindow != null) {
+                        simulatorWindow.killSimulationProcess();
+                    }
                 } else
                     System.out.println("Unrecognized command");
             } catch (IOException e) {
