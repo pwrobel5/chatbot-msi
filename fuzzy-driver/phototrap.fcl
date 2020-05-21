@@ -11,9 +11,9 @@ action : REAL;
 END_VAR
 
 FUZZIFY distance
-TERM near := (0, 1) (20, 1) (30, 0.5) (40, 0);
-TERM medium := (20, 0) (30, 0.5) (40, 1) (60, 1) (70, 0.5) (80, 0);
-TERM far := (60, 0) (70, 0.5) (80, 1) (100, 1);
+TERM near := (0, 1) (40, 1) (60, 0.5) (80, 0);
+TERM medium := (40, 0) (60, 0.5) (80, 1) (120, 1) (140, 0.5) (160, 0);
+TERM far := (120, 0) (140, 0.5) (160, 1) (200, 1);
 END_FUZZIFY
 
 FUZZIFY weight

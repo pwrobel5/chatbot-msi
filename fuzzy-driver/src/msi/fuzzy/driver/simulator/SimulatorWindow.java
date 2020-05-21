@@ -4,31 +4,46 @@ import msi.fuzzy.driver.solver.Solver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Random;
 
 public class SimulatorWindow extends JFrame {
     private boolean runSimulation;
     private int objectX;
     private int objectY;
-    private final DisplayGraphics displayGraphics;
 
-    private final JTextField loudnessTextField;
-    private final JTextField weightTextField;
-    private final JTextField xTextField;
-    private final JTextField yTextField;
+    private final DisplayGraphics displayGraphics;
+    private final ActionListener actionListener;
+
+    private JTextField loudnessTextField;
+    private JTextField weightTextField;
+    private JTextField xTextField;
+    private JTextField yTextField;
+    private JTextField speedTextField;
 
     private double weight;
     private double loudness;
+    private int refreshFrequency;
 
     private final int STEP = 10;
     private final int DISTANCE_THRESHOLD = 150;
+    private final int GRAPHICS_WIDTH = 400;
+    private final int GRAPHICS_HEIGHT = 500;
+    private final int TEXT_FIELD_WIDTH = 10;
+
     private final Random random = new Random();
 
     private void getRandomStartingPoint() {
-        objectX = random.nextInt(getWidth());
-        objectY = random.nextInt(getHeight());
+        int axisChoice = random.nextInt(1);
+        int sideChoice = random.nextInt(1);
+        if (axisChoice == 0) {
+            objectX = (sideChoice == 0) ? 0 : GRAPHICS_WIDTH;
+            objectY = random.nextInt(GRAPHICS_HEIGHT);
+        } else {
+            objectY = (sideChoice == 0) ? 0 : GRAPHICS_HEIGHT;
+            objectX = random.nextInt(GRAPHICS_WIDTH);
+        }
     }
 
     private double getDistanceFromOrigin(int value, int maxValue) {
@@ -53,63 +68,83 @@ public class SimulatorWindow extends JFrame {
         objectY = 0;
         weight = 20.0;
         loudness = 20.0;
+        refreshFrequency = 1000;
+        actionListener = getActionListener();
+        displayGraphics = new DisplayGraphics(GRAPHICS_WIDTH, GRAPHICS_HEIGHT, solver);
 
-        int TEXT_FIELD_WIDTH = 10;
+        getContentPane().add(getMainPanel());
+        pack();
+    }
 
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String command = e.getActionCommand();
-                if (command.equalsIgnoreCase("start")) {
-                    runSimulation = true;
+    private ActionListener getActionListener() {
+        return e -> {
+            String command = e.getActionCommand();
+            if (command.equalsIgnoreCase("start")) {
+                runSimulation = true;
 
-                    Runnable runnable = () -> {
-                        while (runSimulation) {
-                            if (getDistanceFromOrigin(objectX, getWidth()) < DISTANCE_THRESHOLD) {
-                                objectX += random.nextInt(STEP);
-                            } else {
-                                int sign = random.nextInt(2) - 1;
-                                objectX += (sign < 0 ? -1 : 1) * STEP;
-                            }
-
-                            if (getDistanceFromOrigin(objectY, getHeight()) < DISTANCE_THRESHOLD) {
-                                objectY += random.nextInt(STEP);
-                            } else {
-                                int sign = random.nextInt(2) - 1;
-                                objectY += (sign < 0 ? -1 : 1) * STEP;
-                            }
-
-                            if (objectX > getWidth() || objectY > getHeight() || objectX < 0 || objectY < 0) {
-                                getRandomStartingPoint();
-                            } else {
-                                displayGraphics.updateObjectPosition(objectX, objectY, weight, loudness);
-                            }
-
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
+                Runnable runnable = () -> {
+                    while (runSimulation) {
+                        if (getDistanceFromOrigin(objectX, GRAPHICS_WIDTH) < DISTANCE_THRESHOLD) {
+                            objectX += random.nextInt(STEP);
+                        } else {
+                            int sign = random.nextInt(2) - 1;
+                            objectX += (sign < 0 ? -1 : 1) * STEP;
                         }
-                    };
-                    Thread thread = new Thread(runnable);
-                    thread.start();
 
-                } else if (command.equalsIgnoreCase("stop")) {
-                    runSimulation = false;
-                } else if (command.equalsIgnoreCase("change_parameters")) {
-                    weight = Double.parseDouble(weightTextField.getText());
-                    loudness = Double.parseDouble(loudnessTextField.getText());
-                } else if (command.equalsIgnoreCase("set_coordinates")) {
-                    objectX = Integer.parseInt(xTextField.getText());
-                    objectY = Integer.parseInt(yTextField.getText());
-                }
+                        if (getDistanceFromOrigin(objectY, GRAPHICS_HEIGHT) < DISTANCE_THRESHOLD) {
+                            objectY += random.nextInt(STEP);
+                        } else {
+                            int sign = random.nextInt(2) - 1;
+                            objectY += (sign < 0 ? -1 : 1) * STEP;
+                        }
+
+                        if (objectX > GRAPHICS_WIDTH || objectY > GRAPHICS_HEIGHT || objectX < 0 || objectY < 0) {
+                            getRandomStartingPoint();
+                        } else {
+                            displayGraphics.updateObjectPosition(objectX, objectY, weight, loudness);
+                        }
+
+                        try {
+                            Thread.sleep(refreshFrequency);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
+
+            } else if (command.equalsIgnoreCase("stop")) {
+                runSimulation = false;
+            } else if (command.equalsIgnoreCase("change_parameters")) {
+                weight = Double.parseDouble(weightTextField.getText());
+                loudness = Double.parseDouble(loudnessTextField.getText());
+            } else if (command.equalsIgnoreCase("set_coordinates")) {
+                objectX = Integer.parseInt(xTextField.getText());
+                objectY = Integer.parseInt(yTextField.getText());
+            } else if (command.equalsIgnoreCase("set_frequency")) {
+                refreshFrequency = Integer.parseInt(speedTextField.getText());
             }
         };
+    }
 
+    private JPanel getMainPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
+        gridConstraints.gridx = 0;
+        gridConstraints.gridy = 0;
+
+        List<Component> components = List.of(getParametersPanel(), displayGraphics, getCoordinatesPanel(), getSpeedPanel(), getButtonPanel());
+        for (Component component : components) {
+            panel.add(component, gridConstraints);
+            gridConstraints.gridy += 1;
+        }
+
+        return panel;
+    }
+
+    private JPanel getParametersPanel() {
         JPanel parametersPanel = new JPanel();
         parametersPanel.setLayout(new BoxLayout(parametersPanel, BoxLayout.PAGE_AXIS));
         JLabel weightLabel = new JLabel("Weight:");
@@ -129,14 +164,10 @@ public class SimulatorWindow extends JFrame {
         changeParametersButton.addActionListener(actionListener);
         parametersPanel.add(changeParametersButton);
 
-        gridConstraints.gridx = 0;
-        gridConstraints.gridy = 0;
-        panel.add(parametersPanel, gridConstraints);
+        return parametersPanel;
+    }
 
-        displayGraphics = new DisplayGraphics(400, 400, solver);
-        gridConstraints.gridy = 1;
-        panel.add(displayGraphics, gridConstraints);
-
+    private JPanel getCoordinatesPanel() {
         JPanel setCoordinatesPanel = new JPanel();
         JLabel xLabel = new JLabel("x:");
         setCoordinatesPanel.add(xLabel);
@@ -155,9 +186,27 @@ public class SimulatorWindow extends JFrame {
         setCoordinatesButton.addActionListener(actionListener);
         setCoordinatesPanel.add(setCoordinatesButton);
 
-        gridConstraints.gridy = 2;
-        panel.add(setCoordinatesPanel, gridConstraints);
+        return setCoordinatesPanel;
+    }
 
+    private JPanel getSpeedPanel() {
+        JPanel speedPanel = new JPanel();
+        JLabel speedLabel = new JLabel("Refresh frequency:");
+        speedPanel.add(speedLabel);
+        speedTextField = new JTextField(String.valueOf(refreshFrequency));
+        speedPanel.add(speedTextField);
+        JLabel millisecondsLabel = new JLabel("ms");
+        speedPanel.add(millisecondsLabel);
+
+        JButton speedButton = new JButton("Set frequency");
+        speedButton.setActionCommand("set_frequency");
+        speedButton.addActionListener(actionListener);
+        speedPanel.add(speedButton);
+
+        return speedPanel;
+    }
+
+    private JPanel getButtonPanel() {
         JPanel buttonPanel = new JPanel();
         JButton startButton = new JButton("Start");
         startButton.setActionCommand("start");
@@ -169,10 +218,6 @@ public class SimulatorWindow extends JFrame {
         stopButton.addActionListener(actionListener);
         buttonPanel.add(stopButton);
 
-        gridConstraints.gridy = 3;
-        panel.add(buttonPanel, gridConstraints);
-
-        getContentPane().add(panel);
-        pack();
+        return buttonPanel;
     }
 }
