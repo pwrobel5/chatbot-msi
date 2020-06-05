@@ -12,7 +12,6 @@ second_text = response.text.replace("\t", " ").replace("\r", " ").replace("\n", 
 
 with open("text_set.csv", "w", encoding="utf-8") as csvfile:
     csv_writer = csv.writer(csvfile, delimiter="|")
-    csv_writer.writerow(["label", "text"])
     for sentence in first_text:
         csv_writer.writerow(["Ogniem i mieczem", sentence])
     for sentence in second_text:
