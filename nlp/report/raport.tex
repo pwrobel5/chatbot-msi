@@ -70,14 +70,34 @@ Stąd precyzja wynosi około 95\%.
 
 \section{Modyfikacja hiper-parametrów}
 
-Testowano zmiany liczby epok i~rozmiaru batcha, rozmiarów batcha mniejszych od 10 nie testowano, gdyż dla najwyższej użytej liczby epok (20) trenowanie modelu trwało zbyt długo.
+Testowano zmiany liczby epok i~rozmiaru batcha, nie testowano rozmiarów batcha mniejszych od 10, gdyż trenowanie modelu dla większej niż 1~liczby epok trwało zbyt długo.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/hyper.png}
+\end{figure}
+
+W~badanym zakresie nie obserwowano drastycznych zmian, wszystkie wartości precyzji są powyżej 90\%, a~różnica między największą i~najmniejszą precyzją to około 2\%. Dodatkowo wszystkie wartości są niższe niż precyzja uzyskana dla parametrów użytych w~pierwszej części ćwiczenia (liczba epok: 5, rozmiar batcha: 8 (domyślny)).
 
 \section{Własny zbiór danych}
 
-Wybrano fragmenty pierwszego tomu ,,Ogniem i mieczem'' oraz ,,Odyseji'' z~tesktów dostępnych w~portalu wolnelektury.pl. Kryterium doboru tych pozycji były różne epoki w~jakich powstawały oraz fakt, że jedna z~nich jest tekstem oryginalnym a~druga tłumaczeniem. Ze względu na zbyt długi czas treningu modelu dla całego tekstu, z~każdego z~nich wyciągnięto po 1000 zdań rozpoczynając od 50 z~kolei (aby pominąć numery ISBN, tytuł i~inne nieistotne w~tym ćwiczeniu informacje zamieszczane na początku utworu). Zbiór danych jest dostępny pod adresem: \url{https://github.com/pwrobel5/msi/blob/master/nlp/text_set.csv}
+Wybrano fragmenty pierwszego tomu ,,Ogniem i mieczem'' oraz ,,Odyseji'' z~tekstów dostępnych w~portalu \textit{wolnelektury.pl}. Kryterium doboru tych pozycji były różne epoki w~jakich powstawały oraz fakt, że jedna z~nich jest tekstem oryginalnym a~druga tłumaczeniem. Ze względu na zbyt długi czas treningu modelu dla całego tekstu, z~każdego z~nich wyciągnięto po 1000 zdań rozpoczynając od 50 z~kolei (aby pominąć numery ISBN, tytuł i~inne nieistotne w~tym ćwiczeniu informacje zamieszczane na początku utworu). Zbiór danych jest dostępny pod adresem: \url{https://raw.githubusercontent.com/pwrobel5/msi/master/nlp/text_set.csv}
 
 \section{Wyniki treningu modelu dla własnego zbioru danych}
 
-Zastosowano liczbę epok równą~5 i~domyślny rozmiar batcha (8).
+Zastosowano liczbę epok równą~5 i~domyślny rozmiar batcha (8), rozmiar zbioru uczącego wynosił 90\% całego zbioru.
+
+Output:
+\begin{lstlisting}
+{'mcc': 0.8015425832202753, 
+ 'tp': 88, 
+ 'tn': 92, 
+ 'fp': 7, 
+ 'fn': 13, 
+ 'acc': 0.9, 
+ 'eval_loss': 0.3862661376595497}
+\end{lstlisting}
+
+Stąd precyzja wynosi 90\%.
 
 \end{document}
